@@ -1,0 +1,76 @@
+<UserControl x:Class="DotaChecker.App.Views.WarpProfilesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding ComponentsText}" Margin="0,0,0,8" />
+
+        <DockPanel Grid.Row="1" Margin="0,0,0,8" LastChildFill="False">
+            <TextBlock Text="warpscout.exe:" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox Width="360" Text="{Binding WarpscoutPath, UpdateSourceTrigger=LostFocus}" />
+            <TextBlock Text="Каталог .conf:" Margin="16,0,8,0" VerticalAlignment="Center" />
+            <TextBox Width="260" Text="{Binding ConfigDirectory, UpdateSourceTrigger=LostFocus}" />
+            <Button Content="Обновить профили" Margin="12,0,0,0" Padding="12,4"
+                    Command="{Binding RefreshProfilesCommand}" />
+            <Button Content="Scan WARPSCOUT" Margin="8,0,0,0" Padding="12,4"
+                    Command="{Binding ScanCommand}" />
+            <Button Content="Cancel" Margin="8,0,0,0" Padding="12,4"
+                    Command="{Binding CancelScanCommand}" />
+        </DockPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Header="AmneziaWG profiles (без секретов)" Margin="0,0,6,0">
+                <DataGrid ItemsSource="{Binding Profiles}" AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserAddRows="False" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Profile" Binding="{Binding Name}" Width="150" />
+                        <DataGridTextColumn Header="File" Binding="{Binding FileStatus}" Width="90" />
+                        <DataGridTextColumn Header="Structure" Binding="{Binding Valid}" Width="120" />
+                        <DataGridTextColumn Header="Endpoint" Binding="{Binding Endpoint}" Width="180" />
+                        <DataGridTextColumn Header="Secrets" Binding="{Binding SecretNotice}" Width="200" />
+                        <DataGridTextColumn Header="Tunnel" Binding="{Binding TunnelStatus}" Width="220" />
+                        <DataGridTextColumn Header="Warnings" Binding="{Binding Warnings}" Width="260" />
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Check tunnel status (read-only)" Command="{Binding CheckTunnelCommand}" />
+                            <MenuItem Header="Copy warnings" Command="{Binding CopyWarningsCommand}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </GroupBox>
+
+            <GroupBox Grid.Column="1" Header="WARPSCOUT candidates (предварительный отбор)" Margin="6,0,0,0">
+                <DataGrid ItemsSource="{Binding WarpscoutEndpoints}" AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Endpoint" Binding="{Binding Endpoint}" Width="170" />
+                        <DataGridTextColumn Header="Endpoint Ping" Binding="{Binding EndpointPingMs}" Width="110" />
+                        <DataGridTextColumn Header="Tunnel Ping" Binding="{Binding TunnelPingMs}" Width="100" />
+                        <DataGridTextColumn Header="Loss %" Binding="{Binding LossPct}" Width="80" />
+                        <DataGridTextColumn Header="Seen As" Binding="{Binding SeenAs}" Width="100" />
+                        <DataGridTextColumn Header="Node" Binding="{Binding Node}" Width="80" />
+                        <DataGridTextColumn Header="Node Location" Binding="{Binding NodeLocation}" Width="180" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+
+        <TextBlock Grid.Row="3" Margin="0,8,0,0" TextWrapping="Wrap" Text="{Binding StatusMessage}" />
+    </Grid>
+</UserControl>

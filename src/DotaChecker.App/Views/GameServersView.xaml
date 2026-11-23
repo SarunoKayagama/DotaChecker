@@ -1,0 +1,85 @@
+<UserControl x:Class="DotaChecker.App.Views.GameServersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,8" LastChildFill="False">
+            <Button Content="Start ETW discovery" Padding="14,5" Command="{Binding StartDiscoveryCommand}" />
+            <Button Content="Stop" Margin="8,0,0,0" Padding="14,5" Command="{Binding StopDiscoveryCommand}" />
+            <TextBlock Text="{Binding EtwStatusText}" Margin="16,0,0,0" VerticalAlignment="Center"
+                       TextWrapping="Wrap" />
+        </DockPanel>
+
+        <DockPanel Grid.Row="1" Margin="0,0,0,8" LastChildFill="False">
+            <TextBlock Text="Поиск:" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox Width="240" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Center" />
+            <TextBlock Text="Категория:" Margin="16,0,8,0" VerticalAlignment="Center" />
+            <ComboBox Width="190" VerticalAlignment="Center"
+                      ItemsSource="{Binding CategoryFilters}"
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+        </DockPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Rows}"
+                  SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                  AutoGenerateColumns="False"
+                  CanUserSortColumns="True"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  GridLinesVisibility="Horizontal">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Remote IP" Binding="{Binding RemoteIp}" Width="150" />
+                <DataGridTextColumn Header="Remote Port" Binding="{Binding RemotePort}" Width="100" />
+                <DataGridTextColumn Header="Local Endpoint" Binding="{Binding LocalEndPoint}" Width="190" />
+                <DataGridTextColumn Header="PID" Binding="{Binding ProcessId}" Width="70" />
+                <DataGridTextColumn Header="Process" Binding="{Binding ProcessName}" Width="120" />
+                <DataGridTextColumn Header="Protocol" Binding="{Binding Protocol}" Width="80" />
+                <DataGridTextColumn Header="Category" Binding="{Binding CategoryText}" Width="190" />
+                <DataGridTextColumn Header="Evidence" Binding="{Binding EvidenceText}" Width="140" />
+                <DataGridTextColumn Header="First Seen" Binding="{Binding FirstSeen}" Width="160" />
+                <DataGridTextColumn Header="Last Seen" Binding="{Binding LastSeen}" Width="160" />
+                <DataGridTextColumn Header="Send" Binding="{Binding SendCount}" Width="80" />
+                <DataGridTextColumn Header="Receive" Binding="{Binding ReceiveCount}" Width="85" />
+                <DataGridTextColumn Header="Manual" Binding="{Binding ManualState}" Width="130" />
+                <DataGridTextColumn Header="ICMP Monitoring" Binding="{Binding MonitoringText}" Width="260" />
+                <DataGridTextColumn Header="Reasons" Binding="{Binding Reasons}" Width="320" />
+            </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy IP" Command="{Binding CopyIpCommand}" />
+                    <MenuItem Header="Copy IP:Port" Command="{Binding CopyEndpointCommand}" />
+                    <Separator />
+                    <MenuItem Header="Start endpoint monitoring (ICMP)" Command="{Binding StartMonitoringCommand}" />
+                    <MenuItem Header="Stop endpoint monitoring" Command="{Binding StopMonitoringCommand}" />
+                    <MenuItem Header="Continuous Ping (ICMP, не UDP)" Command="{Binding ContinuousPingCommand}" />
+                    <Separator />
+                    <MenuItem Header="Включить endpoint" Command="{Binding IncludeEndpointCommand}" />
+                    <MenuItem Header="Исключить endpoint" Command="{Binding ExcludeEndpointCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+
+        <GroupBox Grid.Row="3" Header="Endpoint details" Margin="0,8,0,0">
+            <TextBox IsReadOnly="True" Text="{Binding SelectedRow.Details, Mode=OneWay}"
+                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+        </GroupBox>
+
+        <StackPanel Grid.Row="4" Margin="0,8,0,0">
+            <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+            <TextBlock Opacity="0.65" TextWrapping="Wrap"
+                       Text="LikelyGameRelay — гипотеза, а не подтверждённый игровой сервер. High — не гарантия. ICMP ping до endpoint не измеряет потери игрового UDP-трафика. Суммы size/dsize не являются достоверным сетевым объёмом." />
+        </StackPanel>
+    </Grid>
+</UserControl>

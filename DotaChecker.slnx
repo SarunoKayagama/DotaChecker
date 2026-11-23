@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DotaChecker.App/DotaChecker.App.csproj" />
+    <Project Path="src/DotaChecker.Core/DotaChecker.Core.csproj" />
+    <Project Path="src/DotaChecker.Network/DotaChecker.Network.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DotaChecker.Tests/DotaChecker.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/AnalyzerDemo/AnalyzerDemo.csproj" />
+    <Project Path="tools/EtwProbe/EtwProbe.csproj" />
+    <Project Path="tools/NetCheck/NetCheck.csproj" />
+    <Project Path="tools/UdpProbe/UdpProbe.csproj" />
+  </Folder>
+</Solution>

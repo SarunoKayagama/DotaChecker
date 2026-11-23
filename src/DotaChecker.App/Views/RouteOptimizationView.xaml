@@ -1,0 +1,74 @@
+<UserControl x:Class="DotaChecker.App.Views.RouteOptimizationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12">
+            <DockPanel LastChildFill="False" Margin="0,0,0,8">
+                <TextBlock Text="{Binding EndpointText}" FontWeight="SemiBold" />
+                <Button Content="Выбрать endpoint" Margin="12,0,0,0" Padding="12,4"
+                        Command="{Binding LoadSelectedEndpointCommand}" />
+            </DockPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Grid.Column="0" Header="Direct (ICMP)" Margin="0,0,6,0" Padding="8">
+                    <StackPanel>
+                        <TextBlock Text="{Binding DirectText}" TextWrapping="Wrap" />
+                        <Button Content="Загрузить из мониторинга" Margin="0,8,0,0" Padding="10,4"
+                                Command="{Binding LoadDirectFromMonitoringCommand}" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Column="1" Header="WARP (реальное измерение)" Margin="6,0,6,0" Padding="8">
+                    <StackPanel>
+                        <TextBlock Text="Профиль:" />
+                        <TextBox Text="{Binding WarpProfileName, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Interface index / name:" Margin="0,4,0,0" />
+                        <DockPanel>
+                            <TextBox Width="60" Text="{Binding WarpInterfaceIndex, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Margin="4,0,0,0" Text="{Binding WarpInterfaceName, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <CheckBox Content="Интерфейс подтверждён" Margin="0,4,0,0"
+                                  IsChecked="{Binding WarpInterfaceVerified, Mode=TwoWay}" />
+                        <TextBlock Text="Sent / Received:" Margin="0,4,0,0" />
+                        <DockPanel>
+                            <TextBox Width="70" Text="{Binding WarpSent, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Width="70" Margin="4,0,0,0" Text="{Binding WarpReceived, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <TextBlock Text="Loss % / Jitter мс:" Margin="0,4,0,0" />
+                        <DockPanel>
+                            <TextBox Width="70" Text="{Binding WarpLossPct, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Width="70" Margin="4,0,0,0" Text="{Binding WarpJitterMs, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <TextBlock Text="RTT samples (csv):" Margin="0,4,0,0" />
+                        <TextBox Text="{Binding WarpRttCsv, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Content="Сохранить измерение" Margin="0,8,0,0" Padding="10,4"
+                                Command="{Binding SetWarpMeasurementCommand}" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Column="2" Header="Результат сравнения" Margin="6,0,0,0" Padding="8">
+                    <TextBlock Text="{Binding ComparisonText}" TextWrapping="Wrap" />
+                </GroupBox>
+            </Grid>
+
+            <DockPanel Margin="0,8,0,0" LastChildFill="False">
+                <Button Content="Сравнить" Padding="14,5" Command="{Binding CompareCommand}" />
+                <Button Content="Очистить" Margin="8,0,0,0" Padding="14,5" Command="{Binding ClearCommand}" />
+            </DockPanel>
+
+            <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Text="{Binding StatusMessage}" />
+            <TextBlock Margin="0,8,0,0" Opacity="0.65" TextWrapping="Wrap"
+                       Text="EvidenceScore/Overall — ранжирующая мера, не вероятность. Отсутствие ICMP-ответа не доказывает потерю игрового UDP. Handshake туннеля не доказывает путь трафика." />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

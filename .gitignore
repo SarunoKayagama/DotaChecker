@@ -1,0 +1,42 @@
+## Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+TestResults/
+*.user
+*.suo
+.vs/
+.vscode/
+
+## Shortcuts (contain machine-specific absolute paths)
+*.lnk
+
+## Third-party binaries (downloaded by the user, never committed)
+*.exe
+*.dll
+*.pdb
+*.zip
+tools/warpscout/
+
+## Secrets and local configuration — MUST NOT be committed
+*.conf
+*.conf.dpapi
+*account*.json
+warpscout-account.json
+*.key
+*.pem
+*.pfx
+.env
+
+## Local data
+*.log
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+
+## OS
+Thumbs.db
+desktop.ini

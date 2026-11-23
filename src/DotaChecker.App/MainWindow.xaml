@@ -1,0 +1,150 @@
+﻿<ui:FluentWindow x:Class="DotaChecker.App.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:vm="clr-namespace:DotaChecker.App.ViewModels"
+                 xmlns:views="clr-namespace:DotaChecker.App.Views"
+                 mc:Ignorable="d"
+                 Title="Dota Checker"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 Height="660"
+                 Width="1060"
+                 MinHeight="520"
+                 MinWidth="840">
+
+    <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <ui:TitleBar Title="Dota Checker" />
+            <Border Padding="20,8,20,8">
+                <StackPanel>
+                    <TextBlock Text="Dota Checker" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="Мониторинг сетевого маршрута и поиск участков с потерями пакетов"
+                               FontSize="13" Opacity="0.75" Margin="0,4,0,0" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <TabControl Grid.Row="1" Margin="16,4,16,12"
+                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+
+            <TabItem Header="Connections">
+                <views:ConnectionsView DataContext="{Binding Connections}" />
+            </TabItem>
+
+            <TabItem Header="Route Monitor">
+                <views:RouteMonitorView DataContext="{Binding RouteMonitor}" />
+            </TabItem>
+
+            <TabItem Header="Game Servers">
+                <views:GameServersView DataContext="{Binding GameServers}" />
+            </TabItem>
+
+            <TabItem Header="WARP Profiles">
+                <views:WarpProfilesView DataContext="{Binding WarpProfiles}" />
+            </TabItem>
+
+            <TabItem Header="Route Optimization">
+                <views:RouteOptimizationView DataContext="{Binding RouteOptimization}" />
+            </TabItem>
+
+            <TabItem Header="Settings">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="16" MaxWidth="620">
+
+                        <TextBlock Text="Оформление" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Тема" Width="220" VerticalAlignment="Center" />
+                            <ComboBox ItemsSource="{Binding Source={x:Static vm:MainViewModel.AvailableThemes}}"
+                                      SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
+                        </DockPanel>
+
+                        <TextBlock Text="Нагрузка и интервалы проб" FontSize="16" FontWeight="SemiBold"
+                                   Margin="0,20,0,8" />
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Интервал пробы, мс" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding ProbeIntervalMs, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Таймаут ICMP/UDP, мс" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding ProbeTimeoutMs, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Таймаут TCP, мс (мин. 3000)" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding TcpProbeTimeoutMs, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Макс. одновременных проверок" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding MaxConcurrentProbes, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Повтор трассировки, с" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding RouteRefreshSeconds, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Максимум hops" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding MaxHops, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+
+                        <TextBlock Text="Анализ" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Минимум проб для вывода" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding MinSamplesForDiagnosis, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Порог потерь, %" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding LossThresholdPct, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <CheckBox Margin="0,8,0,0" Content="Reverse DNS для узлов маршрута"
+                                  IsChecked="{Binding ReverseDnsEnabled, Mode=TwoWay}" />
+
+                        <TextBlock Text="Протоколы" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="UDP-порт назначения" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding UdpDestinationPort, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="TCP-порт назначения" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding TcpDestinationPort, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+
+                        <TextBlock Text="Интеграции" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,8" />
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="warpscout.exe" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding WarpscoutBinaryPath, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Таймаут WARPSCOUT, с" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding WarpscoutTimeoutSeconds, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+                        <DockPanel Margin="0,4">
+                            <TextBlock Text="Каталог .conf AmneziaWG" Width="220" VerticalAlignment="Center" />
+                            <TextBox Text="{Binding AmneziaWgConfigDirectory, UpdateSourceTrigger=LostFocus}" />
+                        </DockPanel>
+
+                        <Button Margin="0,24,0,0" Padding="16,6" HorizontalAlignment="Left"
+                                Content="Сбросить настройки" Command="{Binding ResetSettingsCommand}" />
+
+                        <TextBlock Margin="0,16,0,0" TextWrapping="Wrap" Opacity="0.6"
+                                   Text="Файл настроек:" />
+                        <TextBlock TextWrapping="Wrap" Opacity="0.6" Text="{Binding SettingsPath}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</ui:FluentWindow>

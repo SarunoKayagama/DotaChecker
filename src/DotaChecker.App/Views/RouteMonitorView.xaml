@@ -1,0 +1,154 @@
+<UserControl x:Class="DotaChecker.App.Views.RouteMonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:DotaChecker.App.Controls"
+             mc:Ignorable="d">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,10" LastChildFill="False">
+            <TextBlock Text="Цель (IP или домен):" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBox Width="260" Text="{Binding TargetInput, UpdateSourceTrigger=LostFocus}"
+                     VerticalAlignment="Center" />
+            <TextBlock Text="Протокол:" Margin="20,0,8,0" VerticalAlignment="Center" />
+            <ComboBox SelectedIndex="0" Width="110" VerticalAlignment="Center" IsEnabled="False"
+                      ToolTip="UDP и TCP будут добавлены после отдельной проверки Windows API.">
+                <ComboBoxItem Content="ICMP" />
+            </ComboBox>
+            <Button Content="Start" Margin="20,0,0,0" Padding="18,5" Command="{Binding StartCommand}" />
+            <Button Content="Stop" Margin="8,0,0,0" Padding="18,5" Command="{Binding StopCommand}" />
+            <Button Content="Сбросить статистику" Margin="8,0,0,0" Padding="14,5"
+                    Command="{Binding ResetStatisticsCommand}" />
+            <CheckBox Content="Контролируемый эксперимент" Margin="20,0,0,0" VerticalAlignment="Center"
+                      IsChecked="{Binding IsControlledExperiment, Mode=TwoWay}"
+                      ToolTip="Разрешает вердикт Confirmed. В обычном мониторинге не включать." />
+            <Button Content="Анализировать" Margin="12,0,0,0" Padding="14,5"
+                    Command="{Binding AnalyzeCommand}" />
+        </DockPanel>
+
+        <DockPanel Grid.Row="1" Margin="0,0,0,8" LastChildFill="False">
+            <TextBlock Text="{Binding RoundText}" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding StatusMessage}" Margin="20,0,0,0" TextWrapping="Wrap" Opacity="0.8" />
+        </DockPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="170" />
+            </Grid.RowDefinitions>
+
+            <DataGrid Grid.Row="0"
+                      ItemsSource="{Binding Hops}"
+                      SelectedItem="{Binding SelectedHop, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Hop" Binding="{Binding HopLabel}" Width="55" />
+                    <DataGridTextColumn Header="IP Address" Binding="{Binding Address}" Width="180" />
+                    <DataGridTextColumn Header="Hostname" Binding="{Binding Hostname}" Width="190" />
+                    <DataGridTextColumn Header="Нет ответа %" Binding="{Binding LossText}" Width="95">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="ToolTip" Value="Отсутствие ICMP-ответов на пробы; не является доказанной потерей транзитных пакетов." />
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Sent" Binding="{Binding Sent}" Width="75" />
+                    <DataGridTextColumn Header="Received" Binding="{Binding Received}" Width="85" />
+                    <DataGridTextColumn Header="Last" Binding="{Binding LastText}" Width="85" />
+                    <DataGridTextColumn Header="Average" Binding="{Binding AverageText}" Width="90" />
+                    <DataGridTextColumn Header="Best" Binding="{Binding BestText}" Width="80" />
+                    <DataGridTextColumn Header="Worst" Binding="{Binding WorstText}" Width="80" />
+                    <DataGridTextColumn Header="Jitter" Binding="{Binding JitterText}" Width="80" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="130">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding StatusText}" Value="высокие потери">
+                                        <Setter Property="Foreground" Value="#E6605A" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding StatusText}" Value="потери">
+                                        <Setter Property="Foreground" Value="#E6B84D" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding StatusText}" Value="норма">
+                                        <Setter Property="Foreground" Value="#5AD48A" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="1" Margin="0,6,0,6" Padding="8"
+                    BorderThickness="1" BorderBrush="#556677">
+                <StackPanel>
+                    <TextBlock Text="e2e reference — дополнительный сигнал, не абсолютная истина"
+                               FontWeight="SemiBold" />
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Loss {0} · Sent {1} · Received {2} · Last {3} · Avg {4}">
+                                <Binding Path="E2e.LossText" />
+                                <Binding Path="E2e.Sent" />
+                                <Binding Path="E2e.Received" />
+                                <Binding Path="E2e.LastText" />
+                                <Binding Path="E2e.AverageText" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <GroupBox Grid.Row="2" Header="График RTT выбранного узла (красные метки — таймауты)">
+                <controls:RttChart Rtt="{Binding RttSeries}" Success="{Binding LossSeries}" />
+            </GroupBox>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Padding="8" Margin="0,0,4,0" BorderThickness="1" BorderBrush="#556677">
+                <StackPanel>
+                    <TextBlock Text="Измеренные значения" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="{Binding MeasuredText}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Padding="8" Margin="4,0,4,0" BorderThickness="1" BorderBrush="#556677">
+                <StackPanel>
+                    <TextBlock Text="Статистическая неопределённость" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="{Binding UncertaintyText}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Padding="8" Margin="4,0,0,0" BorderThickness="1" BorderBrush="#556677">
+                <StackPanel>
+                    <TextBlock Text="Диагностическая гипотеза" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="{Binding HypothesisText}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <TextBox Grid.Row="4" Margin="0,6,0,0" Height="70" IsReadOnly="True"
+                 Text="{Binding RouteEventsText, Mode=OneWay}" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" />
+
+        <TextBlock Grid.Row="5" Margin="0,4,0,0" Opacity="0.6" TextWrapping="Wrap" FontSize="11"
+                   Text="{Binding LimitationsText}" />
+    </Grid>
+</UserControl>
